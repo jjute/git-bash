@@ -35,6 +35,7 @@ public class GitBash {
      */
     private static final GitBash BASH = new GitBash();
 
+    private final boolean isOsUnix;
     private final UnixPath path;
     private final String[] cmdPrefix;
 
@@ -45,26 +46,33 @@ public class GitBash {
      * find the git bash CLI application path passed as VM argument through
      * system properties or statically defined in a OS environment variable.
      */
-    private GitBash()  {
-        /*
-         * First try to find the path in system properties
-         */
-        String property = System.getProperty("bash.cli.path");
-        if (property == null)
+    private GitBash() {
+
+        isOsUnix = SystemUtils.IS_OS_UNIX;
+        if (!isOsUnix)
         {
-            /* If the path was not found continue to search environment variables
+            /* First try to find the path in system properties
              */
-            final Path appPath = SystemUtils.getApplicationPath(CLI_APP_NAME, true);
-            if (appPath != null && appPath.toFile().exists()) {
-                path = UnixPath.get(appPath);
+            String property = System.getProperty("bash.cli.path");
+            if (property == null)
+            {
+                /* If the path was not found continue to search environment variables
+                 */
+                final Path appPath = SystemUtils.getApplicationPath(CLI_APP_NAME, true);
+                if (appPath != null && appPath.toFile().exists()) {
+                    path = UnixPath.get(appPath);
+                }
+                else {
+                    String error = "Unable to find git bash CLI application: " + CLI_APP_NAME;
+                    throw new FileSystemNotFoundException(error);
+                }
             }
-            else {
-                String error = "Unable to find git bash CLI application: " + CLI_APP_NAME;
-                throw new FileSystemNotFoundException(error);
-            }
+            else path = UnixPath.get(property);
+            cmdPrefix = new String[]{path.toString(), "-i", "-c"};
         }
-        else path = UnixPath.get(property);
-        cmdPrefix = new String[] { path.toString(), "-i", "-c" };
+        else {
+            path = null; cmdPrefix = null;
+        }
     }
 
     /**
@@ -73,6 +81,10 @@ public class GitBash {
      */
     public GitBash(Path gitBashPath) {
 
+        if (SystemUtils.IS_OS_UNIX) {
+            throw new IllegalStateException("This operation is not supported on Unix");
+        }
+        isOsUnix = false;
         path = UnixPath.get(gitBashPath);
         cmdPrefix = new String[] { path.toString(), "-i", "-c" };
     }
@@ -90,9 +102,11 @@ public class GitBash {
      */
     public void runCommand(BashCommand command) throws IOException, InterruptedException {
 
-        String sCommand = StringUtils.quote(command.toString(), false);
+        String sCommand = isOsUnix ? command.toString() : StringUtils.quote(command.toString(), false);
+        String[] cmd = isOsUnix ? new String[] { sCommand } : ArrayUtils.add(cmdPrefix, sCommand);
+
         LibraryLogger.debug("Running git bash command: " + sCommand);
-        ProcessBuilder pb = new ProcessBuilder(ArrayUtils.add(cmdPrefix, sCommand));
+        ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.start().waitFor();
     }
 
@@ -123,4 +137,3 @@ public class GitBash {
         return path;
     }
 }
-
