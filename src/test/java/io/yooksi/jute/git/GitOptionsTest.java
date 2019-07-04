@@ -1,6 +1,5 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.git.DiffFilterOption;
 import org.jetbrains.annotations.TestOnly;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

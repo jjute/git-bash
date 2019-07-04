@@ -1,6 +1,6 @@
 package io.yooksi.jute.git.bash;
 
-import io.yooksi.commons.git.GitCommand;
+import io.yooksi.jute.git.GitCommand;
 
 /**
  * This object represents a bash command of a specific {@link Type}.

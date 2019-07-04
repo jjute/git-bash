@@ -1,11 +1,9 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.bash.BashScript;
-import io.yooksi.commons.bash.GitBash;
-import io.yooksi.commons.bash.RedirectOutput;
-import io.yooksi.commons.bash.UnixPath;
 import io.yooksi.commons.util.FileUtils;
 import io.yooksi.commons.util.StringUtils;
+import io.yooksi.jute.git.bash.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,5 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.git.Git;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;

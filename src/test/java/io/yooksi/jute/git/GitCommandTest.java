@@ -1,7 +1,6 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.bash.*;
-import io.yooksi.commons.git.GitCommand;
+import io.yooksi.jute.git.bash.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
