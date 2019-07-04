@@ -1,4 +1,4 @@
-package io.yooksi.jute.git.bash;
+package io.yooksi.jute.bash;
 
 import io.yooksi.commons.define.IBuilder;
 import io.yooksi.commons.define.MethodsNotNull;

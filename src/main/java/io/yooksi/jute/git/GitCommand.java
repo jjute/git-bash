@@ -1,6 +1,6 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.jute.git.bash.BashCommand;
+import io.yooksi.jute.bash.BashCommand;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;

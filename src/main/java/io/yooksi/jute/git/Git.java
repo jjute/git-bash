@@ -1,6 +1,6 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.jute.git.bash.UnixPath;
+import io.yooksi.jute.bash.UnixPath;
 import io.yooksi.commons.define.LineSeparator;
 import io.yooksi.commons.define.MethodsNotNull;
 import io.yooksi.commons.logger.LibraryLogger;
