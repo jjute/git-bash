@@ -22,10 +22,12 @@ import java.nio.file.Paths;
 @MethodsNotNull
 public class UnixPath {
 
-    private final String path;
+    private final Path pPath;
+    private final String sPath;
 
-    private UnixPath(Path path) {
-        this.path = convert(path);
+    private UnixPath(Path pPath) {
+        this.pPath = pPath;
+        this.sPath = convert(pPath);
     }
 
     /**
@@ -62,13 +64,22 @@ public class UnixPath {
      * Convert this path to a standard Java {@code Path}.
      */
     public Path convert() {
-        return Paths.get(path);
+        return pPath;
     }
+
+    /**
+     * @return Returns a {@link File} object representing this path.
+     * @see Path#toFile()
+     */
+    public java.io.File toFile() {
+        return pPath.toFile();
+    }
+
     /**
      * @return a {@code String} representation of this path.
      */
     @Override
     public String toString() {
-        return path;
+        return sPath;
     }
 }
