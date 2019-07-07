@@ -33,10 +33,10 @@ public class BashScript {
      * @param commands list of bash commands
      * @param write whether to write the commands to file
      *
-     * @throws IllegalStateException when an I/O exception occurs while writing to file.
+     * @throws RuntimeException when an I/O exception occurs while writing to file.
      *         We are using a {@code RuntimeException} here to get around interface contracts.
      */
-    private BashScript(UnixPath path, List<String> commands, boolean write) throws IllegalStateException {
+    private BashScript(UnixPath path, List<String> commands, boolean write) throws RuntimeException {
 
         try {
             this.path = path;
@@ -44,12 +44,15 @@ public class BashScript {
             this.commands = commands;
 
             if (write) {
+                if (!file.exists() && !file.createNewFile()) {
+                    throw new IOException();
+                }
                 FileUtils.writeLines(file, commands);
             }
         }
         catch (IOException e) {
-            throw new IllegalStateException(
-                    new IOException("Failed to create new BashScript file", e));
+            String log = "Failed to create new BashScript file " + path.toString();
+            throw new RuntimeException(new BashIOException(log, e));
         }
     }
 
