@@ -20,7 +20,7 @@ public class BashTests {
     private static final File logFile = new File("bashTest.log");
 
     @Test
-    public void runBashScriptEchoSingleLineTest() throws IOException {
+    public void runBashScriptEchoSingleLineTest() throws BashExecutionException, IOException {
 
         String logText = "Hello World";
         Path scriptPath = Paths.get("testScript.sh");
@@ -34,7 +34,7 @@ public class BashTests {
     }
 
     @Test
-    public void runBashScriptEchoMultiLine1Test() throws IOException {
+    public void runBashScriptEchoMultiLine1Test() throws BashExecutionException, IOException {
 
         String[] logText = { "First line ", "Second line ", "Third line " };
         Path scriptPath = Paths.get("testScript.sh");
@@ -50,7 +50,7 @@ public class BashTests {
         Assertions.assertEquals(FileUtils.readFileToString(tempTxt, Charset.defaultCharset()).trim(), output.trim());
     }
 
-    private String runBashScript(UnixPath logPath, BashScript script) throws IOException {
+    private String runBashScript(UnixPath logPath, BashScript script) throws BashExecutionException, IOException {
 
         GitBash.get().runBashScript(script);
         File logFile = new File(logPath.toString());

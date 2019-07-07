@@ -14,13 +14,15 @@ import java.nio.file.Paths;
 public class GitCommandTest {
 
     @Test
-    public void testGitVersionCommand() throws IOException {
+    public void testGitVersionCommand() throws BashExecutionException, IOException {
 
         Path scriptPath = Paths.get("testScript.sh");
         UnixPath logPath = UnixPath.get("logs/testScript.log");
         RedirectOutput redirect = RedirectOutput.overwrite(logPath);
+        logPath.toFile().deleteOnExit();
 
         BashScript script = BashScript.create(scriptPath, redirect, true).appendCmd(GitCommand.VERSION).build();
+        script.getFile().deleteOnExit();
         GitBash.get().runBashScript(script);
 
         String output = FileUtils.readFileToString(logPath.convert().toFile(), Charset.defaultCharset());
