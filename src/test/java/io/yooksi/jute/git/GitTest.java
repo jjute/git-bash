@@ -32,8 +32,8 @@ public class GitTest {
     }
     private void openGitRepository() throws IOException {
 
-        git = Git.openRepository();
-        git = Git.openRepository(Paths.get(".git"));
+        if (Paths.get(".git").toFile().isDirectory())
+            git = Git.openRepository();
     }
 
     @Test @Order(2)
@@ -164,8 +164,10 @@ public class GitTest {
     @Test
     public void deleteRepository() throws IOException {
 
-        FileUtils.deleteDirectory(path.toFile());
-        Assertions.assertFalse(path.toFile().exists());
+        if (path.toFile().isDirectory()) {
+            FileUtils.deleteDirectory(path.toFile());
+            Assertions.assertFalse(path.toFile().exists());
+        }
     }
 
     private File createSampleFile(String name, String... content) throws IOException {
