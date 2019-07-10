@@ -1,6 +1,6 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.define.MethodsNotNull;
+import io.yooksi.jute.commons.define.MethodsNotNull;
 
 import javax.validation.constraints.NotEmpty;
 

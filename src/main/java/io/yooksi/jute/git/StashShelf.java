@@ -1,7 +1,7 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.define.MethodsNotNull;
-import io.yooksi.commons.logger.LibraryLogger;
+import io.yooksi.jute.commons.define.MethodsNotNull;
+import io.yooksi.jute.commons.logger.LibraryLogger;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.StashApplyFailureException;
 import org.eclipse.jgit.lib.ObjectId;

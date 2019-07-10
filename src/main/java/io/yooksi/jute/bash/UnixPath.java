@@ -1,6 +1,6 @@
 package io.yooksi.jute.bash;
 
-import io.yooksi.commons.define.MethodsNotNull;
+import io.yooksi.jute.commons.define.MethodsNotNull;
 
 import java.io.File;
 import java.nio.file.Path;

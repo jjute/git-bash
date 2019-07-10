@@ -1,11 +1,11 @@
 package io.yooksi.jute.git;
 
 import io.yooksi.jute.bash.UnixPath;
-import io.yooksi.commons.define.LineSeparator;
-import io.yooksi.commons.define.MethodsNotNull;
-import io.yooksi.commons.logger.LibraryLogger;
+import io.yooksi.jute.commons.define.LineSeparator;
+import io.yooksi.jute.commons.define.MethodsNotNull;
+import io.yooksi.jute.commons.logger.LibraryLogger;
 
-import io.yooksi.commons.util.StringUtils;
+import io.yooksi.jute.commons.util.StringUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;

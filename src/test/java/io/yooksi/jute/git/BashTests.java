@@ -1,7 +1,7 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.util.FileUtils;
-import io.yooksi.commons.util.StringUtils;
+import io.yooksi.jute.commons.util.FileUtils;
+import io.yooksi.jute.commons.util.StringUtils;
 import io.yooksi.jute.bash.*;
 
 import org.junit.jupiter.api.Assertions;

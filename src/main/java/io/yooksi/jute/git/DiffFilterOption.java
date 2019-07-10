@@ -1,6 +1,6 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.define.IBuilder;
+import io.yooksi.jute.commons.define.IBuilder;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Map;

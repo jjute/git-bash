@@ -1,10 +1,10 @@
 package io.yooksi.jute.bash;
 
-import io.yooksi.commons.define.MethodsNotNull;
-import io.yooksi.commons.logger.LibraryLogger;
-import io.yooksi.commons.util.ArrayUtils;
-import io.yooksi.commons.util.StringUtils;
-import io.yooksi.commons.util.SystemUtils;
+import io.yooksi.jute.commons.define.MethodsNotNull;
+import io.yooksi.jute.commons.logger.LibraryLogger;
+import io.yooksi.jute.commons.util.ArrayUtils;
+import io.yooksi.jute.commons.util.StringUtils;
+import io.yooksi.jute.commons.util.SystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;

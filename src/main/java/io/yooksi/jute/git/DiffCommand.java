@@ -1,7 +1,7 @@
 package io.yooksi.jute.git;
 
-import io.yooksi.commons.define.IBuilder;
-import io.yooksi.commons.util.ArrayUtils;
+import io.yooksi.jute.commons.define.IBuilder;
+import io.yooksi.jute.commons.util.ArrayUtils;
 
 import java.nio.file.Path;
 
