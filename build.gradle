@@ -1,5 +1,14 @@
-
-apply from: file(initScriptPath).exists() ? initScriptPath : initScriptUrl
+/*
+ * Apply the initialization scripts only if they have not 
+ * been already applied from Jute root project.
+ */
+if (!rootProject.name.equals('jute'))
+{
+    apply from: userContentUrl + initScriptPath
+    if (codeCoverageEnabled.equals('true')) {
+        apply from: userContentUrl + coverageScriptPath
+    }
+}
 
 dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-exec
