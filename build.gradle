@@ -1,13 +1,9 @@
 /*
- * Apply the initialization scripts only if they have not 
- * been already applied from Jute root project.
+ * Apply initialization script only if they have not 
+ * already been applied from Jute root project
  */
-if (!rootProject.name.equals('jute'))
-{
+if (!rootProject.name.equals('jute')) {
     apply from: userContentUrl + initScriptPath
-    if (codeCoverageEnabled.equals('true')) {
-        apply from: userContentUrl + coverageScriptPath
-    }
 }
 
 dependencies {
