@@ -25,7 +25,7 @@ import java.nio.file.Paths;
  * <ul>
  *     <li>On <i>Windows</i> the constructor will search for the application path in
  *     environment variables and if not found a {@code RuntimeException} will be thrown.</li>
- *     <li>On <i>Unix</i> {@code bin/bash} path will be used to execute commands.</li>
+ *     <li>On <i>Unix</i> {@code bash} path will be used to execute commands.</li>
  * </ul>
  * @see <a href=https://tiswww.case.edu/php/chet/bash/bashref.html>Bash Reference Manual</a>
  */
@@ -59,7 +59,7 @@ public class GitBash {
      */
     private GitBash() throws FileSystemNotFoundException {
 
-        String execPath = "bin/bash";
+        String execPath = "bash";
         isOsUnix = SystemUtils.IS_OS_UNIX;
 
         if (!isOsUnix)
