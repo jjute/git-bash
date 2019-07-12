@@ -2,12 +2,15 @@ package io.yooksi.jute.bash;
 
 import io.yooksi.jute.commons.define.MethodsNotNull;
 import io.yooksi.jute.commons.logger.LibraryLogger;
-import io.yooksi.jute.commons.util.ArrayUtils;
-import io.yooksi.jute.commons.util.StringUtils;
 import io.yooksi.jute.commons.util.SystemUtils;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 
 import java.io.IOException;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * <p>
@@ -16,12 +19,13 @@ import java.nio.file.Path;
  *     with a default instance which is statically initialized for ease of access.
  * <p>
  *     Constructor will perform <i>platform-specific</i> operations to determine the
- *     <i>platform-dependent</i> command prefix used in {@code ProcessBuilder} to
- *     execute commands. Currently only Windows and Unix are supported.
+ *     path to the Bash executable used by Apache {@code CommandLine} to initialize
+ *     and {@code DefaultExecutor} to execute commands. Currently only Windows and
+ *     Unix operating system platforms are fully tested.
  * <ul>
  *     <li>On <i>Windows</i> the constructor will search for the application path in
- *     environment variables and if not found it will use {@code command prompt}.</li>
- *     <li>On <i>Unix</i> a {@code sh} prefix will be used to execute commands.</li>
+ *     environment variables and if not found a {@code RuntimeException} will be thrown.</li>
+ *     <li>On <i>Unix</i> {@code bin/bash} path will be used to execute commands.</li>
  * </ul>
  * @see <a href=https://tiswww.case.edu/php/chet/bash/bashref.html>Bash Reference Manual</a>
  */
@@ -38,102 +42,104 @@ public class GitBash {
     private static final String CLI_APP_NAME =
             System.getProperty("bash.cli.name", "git-bash.exe");
 
-    /**
-     * Default {@code GitBash} instance available for public use.
-     * @see #get()
-     */
+    /** Default {@code GitBash} instance available for public use. */
     private static final GitBash BASH = new GitBash();
 
-    /**
-     * Will be{@code true} if the current platform is a {@code UNIX} like system.
-     */
+    /** Will be{@code true} if the current platform is a {@code UNIX} like system. */
     private final boolean isOsUnix;
+
+    /** Path to the Bash executable application. */
+    private final Path executable;
+
     /**
-     * Used to set the first {@code ProcessBuilder} command argument.
+     * Internal constructor only used by {@link #BASH}.
+     *
+     * @throws FileSystemNotFoundException when the git bash command line
+     * application path under {@link #CLI_APP_NAME} was unable to be resolved.
      */
-    private final String[] cmdPrefix;
+    private GitBash() throws FileSystemNotFoundException {
 
-    /* Internal constructor only used by {@link #BASH}. */
-    private GitBash() {
-
-        cmdPrefix = new String[] { "", "-c" };
+        String execPath = "bin/bash";
         isOsUnix = SystemUtils.IS_OS_UNIX;
 
         if (!isOsUnix)
         {
             /* First try to find the path in system properties
              */
-            cmdPrefix[0] = System.getProperty("bash.cli.path");
-            if (cmdPrefix[0] == null)
+            execPath = System.getProperty("bash.cli.path");
+            if (execPath == null)
             {
                 /* If the path was not found continue to search environment variables
                  */
                 final Path appPath = SystemUtils.getApplicationPath(CLI_APP_NAME, true);
                 if (appPath != null && appPath.toFile().exists()) {
-                    cmdPrefix[0] = appPath.toString();
+                    executable = appPath; return;
                 }
                 else {
-                    LibraryLogger.warn("Unable to find git bash CLI application %s, " +
-                            "defaulting to cmd.exe", CLI_APP_NAME);
-
-                    cmdPrefix[0] = "cmd.exe";
+                    String error = "Unable to find git bash CLI application: " + CLI_APP_NAME;
+                    throw new FileSystemNotFoundException(error);
                 }
             }
         }
-        else cmdPrefix[0] = "sh";
+        executable = Paths.get(execPath);
     }
 
     /**
      * Create a new {@code GitBash} instance that represents a git bash
      * command line application program that resides under given path
      * 
-     * @throws IllegalStateException if the current platform is a <i>Unix-based</i> system.
+     * @throws UnsupportedOperationException if the current platform is a <i>Unix-based</i> system.
      */
     public GitBash(Path gitBashPath) {
 
         if (SystemUtils.IS_OS_UNIX) {
-            throw new IllegalStateException("This operation is not supported on Unix");
+            throw new UnsupportedOperationException("This operation is not supported on Unix");
         }
         isOsUnix = false;
-        cmdPrefix = new String[] { gitBashPath.toString(), "-c" };
+        executable = gitBashPath;
     }
 
     /**
-     * Execute a git bash command with {@code ProcessBuilder}.
+     * Execute a Bash command with {@code DefaultExecutor}.
+     *
+     * @return process exit value
      *
      * @throws NullPointerException if the return value of {@link BashCommand#toString()}
      * for the supplied {@code BashCommand} is {@code null}.
      *
-     * @throws IOException if an I/O error occurs while starting {@code ProcessBuilder}.
+     * @throws IOException if an I/O error occurs while executing command.
+     * @throws ExecuteException execution of subprocess failed or the subprocess
+     *                          returned a exit value indicating a failure
      *
-     * @throws InterruptedException if the current thread is interrupted by another thread while
-     *                              it is waiting, then the wait is ended and this exception is thrown.
+     * @see DefaultExecutor#execute(CommandLine)
      */
-    public void runCommand(BashCommand command) throws IOException, InterruptedException {
+    @SuppressWarnings("UnusedReturnValue")
+    public int runCommand(BashCommand command) throws IOException, ExecuteException {
 
-        String sCommand = isOsUnix ? command.toString() : StringUtils.quote(command.toString(), false);
+        String sCommand = command.toString();
         LibraryLogger.debug("Running git bash command: " + sCommand);
 
-        ProcessBuilder pb = new ProcessBuilder(ArrayUtils.add(cmdPrefix, sCommand));
-        pb.start().waitFor();
+        CommandLine cmdLine = new CommandLine(executable.toString());
+        cmdLine.addArguments(new String[] { "-c", sCommand }, false);
+
+        DefaultExecutor executor = new DefaultExecutor();
+        return executor.execute(cmdLine);
     }
 
     /**
      * Execute a script {@code BashCommand} for the given {@code BashScript}.
      *
      * @throws BashIOException if an I/O error occurs while starting {@code ProcessBuilder}.
-     * @throws BashExecutionException if the current thread is interrupted by another thread while
-     *                                it is waiting, then the wait is ended and this exception is thrown
      */
-    public void runBashScript(BashScript script) throws BashExecutionException  {
+    public void runBashScript(BashScript script) throws BashIOException  {
 
         try {
             runCommand(new BashCommand(BashCommand.Type.SCRIPT, script.getPath().toString()));
         }
-        catch (IOException | InterruptedException e)
+        catch (IOException e)
         {
-            String log = "An exception occurred while trying to run bash script " + script.getFile().getName();
-            throw e instanceof IOException ? new BashIOException(log , e) : new BashExecutionException(log, e);
+            String log = "An exception occurred while trying to run bash script ";
+            throw new BashIOException(log + script.getFile().getName(), e);
         }
     }
 
