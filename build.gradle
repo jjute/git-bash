@@ -3,7 +3,7 @@
  * already been applied from Jute root project
  */
 if (!rootProject.name.equals('jute')) {
-    apply from: userContentUrl + initScriptPath
+    apply from: 'https://raw.githubusercontent.com/jjute/jute/master/jute.gradle'
 }
 
 dependencies {
